@@ -1,0 +1,28 @@
+{
+  "dependencies": {
+    "@google/genai": "^1.49.0",
+    "aedes": "^1.0.2",
+    "axios": "^1.13.6",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "firebase": "^12.9.0",
+    "mongoose": "^9.3.0",
+    "mqtt": "^5.15.0",
+    "multer": "^2.1.1",
+    "node-fetch": "^3.3.2",
+    "websocket-stream": "^5.5.2"
+  },
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
