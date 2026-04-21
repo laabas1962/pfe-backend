@@ -119,12 +119,7 @@ async function startServer() {
       console.log(`🚀 Server is running on port ${PORT}`);
       console.log(`🔗 Local link: http://localhost:${PORT}`);
       
-      // Start the self-hosted MQTT Broker
-      try {
-        await startBroker();
-      } catch (brokerErr) {
-        console.error("❌ Failed to start Aedes Broker:", brokerErr);
-      }
+      
       
       await initializeExistingDevices();
     });
