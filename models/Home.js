@@ -8,6 +8,6 @@ const HomeSchema = new mongoose.Schema({
   userId: { type: String, required: true },
   mode: { type: String, enum: ["normal", "elderly"], default: "normal" },
   createdAt: { type: Date, default: Date.now }
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model("Home", HomeSchema);

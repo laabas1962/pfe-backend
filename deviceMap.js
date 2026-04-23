@@ -47,6 +47,20 @@ const DEVICE_MAP = {
     model: "August Wi-Fi",
     icon: "lock",
     power: 5
+  },
+  device_8: {
+    type: "curtain",
+    name: "Smart Curtain",
+    model: "Somfy Smart",
+    icon: "curtains",
+    power: 15
+  },
+  device_9: {
+    type: "washing",
+    name: "Washing Machine",
+    model: "LG ThinQ",
+    icon: "washing-machine",
+    power: 500
   }
 };
 

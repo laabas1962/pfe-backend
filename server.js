@@ -13,6 +13,7 @@ const routineRoutes = require("./routes/routines");
 const assistantVoice = require("./routes/assistant");
 const activityRoutes = require("./routes/activity");
 const relationshipRoutes = require("./routes/relationships");
+const suggestionRoutes = require("./routes/suggestions");
 
 require("./mqttClient");
 const { startBroker } = require("./broker");
@@ -32,6 +33,7 @@ app.use("/routines", routineRoutes);
 app.use("/assistant-voice", assistantVoice);
 app.use("/activity", activityRoutes);
 app.use("/relationships", relationshipRoutes);
+app.use("/suggestions", suggestionRoutes);
 
 app.get("/weather", async (req, res) => {
   const { lat, lon } = req.query;

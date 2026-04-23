@@ -5,7 +5,8 @@ const fs = require("fs");
 const path = require("path");
 const { GoogleGenAI, createPartFromUri, Type } = require("@google/genai");
 const Device = require("../models/Device");
-const Activity = require("../models/Activity");
+const { processActivityEvent } = require("../services/activityPipeline");
+const { applyPowerStateChange } = require("../services/deviceState");
 
 fs.mkdirSync("uploads", { recursive: true });
 const upload = multer({ dest: "uploads/" });
@@ -359,16 +360,19 @@ router.post("/", upload.single("audio"), async (req, res) => {
       } else {
         const topic = `home/${matchedDevice.homeId}/${matchedDevice.roomName}/${matchedDevice.name}`;
         mqttClient.publish(topic, "ON");
-        matchedDevice.isOn = true;
+        applyPowerStateChange(matchedDevice, true);
         matchedDevice.lastUpdated = new Date();
         await matchedDevice.save();
 
-        await Activity.create({
+        await processActivityEvent({
           homeId: matchedDevice.homeId,
+          roomId: matchedDevice.roomId,
           deviceId: matchedDevice._id,
           deviceName: matchedDevice.name,
           roomName: matchedDevice.roomName,
-          action: "turned on from voice assistant",
+          source: "assistant",
+          action: "ON",
+          value: { isOn: true },
         });
 
         responseText = `Turning on ${matchedDevice.name} in ${matchedDevice.roomName}`;
@@ -379,16 +383,19 @@ router.post("/", upload.single("audio"), async (req, res) => {
       } else {
         const topic = `home/${matchedDevice.homeId}/${matchedDevice.roomName}/${matchedDevice.name}`;
         mqttClient.publish(topic, "OFF");
-        matchedDevice.isOn = false;
+        applyPowerStateChange(matchedDevice, false);
         matchedDevice.lastUpdated = new Date();
         await matchedDevice.save();
 
-        await Activity.create({
+        await processActivityEvent({
           homeId: matchedDevice.homeId,
+          roomId: matchedDevice.roomId,
           deviceId: matchedDevice._id,
           deviceName: matchedDevice.name,
           roomName: matchedDevice.roomName,
-          action: "turned off from voice assistant",
+          source: "assistant",
+          action: "OFF",
+          value: { isOn: false },
         });
 
         responseText = `Turning off ${matchedDevice.name} in ${matchedDevice.roomName}`;

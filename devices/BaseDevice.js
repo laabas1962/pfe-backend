@@ -1,5 +1,6 @@
 const mqttClient = require("../mqttClient");
 const Device = require("../models/Device");
+const { processActivityEvent } = require("../services/activityPipeline");
 
 class BaseDevice {
   constructor(name, roomName, homeId) {
@@ -26,6 +27,9 @@ class BaseDevice {
       if (!device) return;
 
       const msg = message.toString();
+      let parsedState = null;
+      let activityAction = "CHANGE";
+      let activityValue = null;
       const now = Date.now();
       const today = new Date().toISOString().split("T")[0];
       const lastResetDate = device.lastDailyReset
@@ -52,6 +56,8 @@ class BaseDevice {
           device.lastOnTime = now;
         }
         device.isOn = true;
+        activityAction = "ON";
+        activityValue = { isOn: true };
       } else if (msg === "OFF") {
         if (device.isOn && device.lastOnTime) {
           const sessionTime = now - device.lastOnTime;
@@ -60,17 +66,34 @@ class BaseDevice {
         }
         device.lastOnTime = 0;
         device.isOn = false;
+        activityAction = "OFF";
+        activityValue = { isOn: false };
       } else {
         try {
-          const stateObj = JSON.parse(msg);
-          device.state = { ...(device.state || {}), ...stateObj };
+          parsedState = JSON.parse(msg);
+          device.state = { ...(device.state || {}), ...parsedState };
+          activityValue = parsedState;
         } catch {
           device.state = { ...(device.state || {}), raw: msg };
+          activityValue = { raw: msg };
         }
       }
 
       device.lastUpdated = new Date();
       await device.save();
+
+      await processActivityEvent({
+        homeId: device.homeId,
+        roomId: device.roomId,
+        deviceId: device._id,
+        deviceName: device.name,
+        roomName: device.roomName,
+        source: "mqtt",
+        action: activityAction,
+        state: parsedState,
+        value: activityValue,
+        occurredAt: new Date(now),
+      });
     } catch (err) {
       console.error("Error updating device state in DB:", err);
     }

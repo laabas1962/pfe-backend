@@ -17,6 +17,6 @@ const userSchema = new mongoose.Schema({
   default: "normal"
  },
   hasSetup: { type: Boolean, default: false },
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model("User", userSchema);

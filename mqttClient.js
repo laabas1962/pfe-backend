@@ -10,7 +10,7 @@ const client = mqtt.connect(brokerUrl, {
   reconnectPeriod: 3000,
   username: process.env.MQTT_USER,
   password: process.env.MQTT_PASS,
-  rejectUnauthorized: false, // important for EMQX TLS
+  rejectUnauthorized: false, 
 });
 
 // allow many device listeners
