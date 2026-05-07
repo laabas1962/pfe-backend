@@ -60,7 +60,12 @@ const COMMAND_SCHEMA = {
 const mqttClient = require("../mqttClient");
 
 function getGeminiApiKey() {
-  return process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || "";
+  return (
+    process.env.GEMINI_API_KEY ||
+    process.env.Gemini_API_Key ||
+    process.env.GOOGLE_API_KEY ||
+    ""
+  );
 }
 
 function getGeminiClient() {
