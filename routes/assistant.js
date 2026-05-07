@@ -320,9 +320,14 @@ User request: ${userText}`,
 router.post("/", upload.single("audio"), async (req, res) => {
   try {
     if (!getGeminiApiKey()) {
+      console.error("Gemini API Key missing. Checked: GEMINI_API_KEY, Gemini_API_Key, GOOGLE_API_KEY");
       return res.status(500).json({
         success: false,
-        error: "GEMINI_API_KEY is missing on the backend",
+        error: "GEMINI_API_KEY is missing on the backend. Please check Render Environment Variables.",
+        debug: {
+          checkedKeys: ["GEMINI_API_KEY", "Gemini_API_Key", "GOOGLE_API_KEY"],
+          envKeysPresent: Object.keys(process.env).filter(k => k.toLowerCase().includes("gemini") || k.toLowerCase().includes("google"))
+        }
       });
     }
 
